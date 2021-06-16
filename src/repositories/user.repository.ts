@@ -14,19 +14,23 @@ export class UserRepository {
   public async login(
     userModel: UserModel
   ): Promise<TokenModel> {
-    let result: TokenModel;
-    await Connection.DB.get(`SELECT count(*) as userCounts FROM users WHERE username = '${userModel.username}' AND password = '${userModel.password}';`, (err: any, row: any) => {
-      if (row && row.userCounts == 1) {
-        result = {
-          access_token: generateAccessToken("ACCESS_TOKEN", userModel.username, 300),
-          refresh_token: generateAccessToken("REFRESH_TOKEN", userModel.username, 900)
-        } as TokenModel;
-      }
-      else {
-        console.log(err);
-      }
+    const res = await new Promise((resolve, reject) => {
+      Connection.DB.get(`SELECT count(*) as userCounts FROM users WHERE username = '${userModel.username}' AND password = '${userModel.password}';`, (err: any, row: any) => {
+        if (row && row.userCounts == 1) {
+          resolve({
+            access_token: generateAccessToken("ACCESS_TOKEN", userModel.username, 300),
+            refresh_token: generateAccessToken("REFRESH_TOKEN", userModel.username, 900)
+          } as TokenModel);
+        }
+        else if(err) {
+          reject(err);
+        }
+        else {
+          resolve(null);
+        }
+      })
     });
 
-    return result;
+    return res as TokenModel;
   }
 }

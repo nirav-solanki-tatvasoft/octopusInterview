@@ -20,7 +20,7 @@ export class UserController {
           return res.status(HttpStatusCode.Ok).json(tokenModel);
         }
         else {
-          return res.status(HttpStatusCode.NotFound).json(ErrorCode.NotFound);
+          return res.status(HttpStatusCode.BadRequest).json(ErrorCode.BadRequest);
         }
       }
       )
