@@ -16,6 +16,7 @@ export class UserRepository {
   ): Promise<TokenModel> {
     const res = await new Promise((resolve, reject) => {
       Connection.DB.get(`SELECT count(*) as userCounts FROM users WHERE username = '${userModel.username}' AND password = '${userModel.password}';`, (err: any, row: any) => {
+        
         if (row && row.userCounts == 1) {
           resolve({
             access_token: generateAccessToken("ACCESS_TOKEN", userModel.username, 300),
